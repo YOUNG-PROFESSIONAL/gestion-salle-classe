@@ -1,27 +1,29 @@
 package main.java.tp.eni.gsc.salle.bean;
 
+import main.java.tp.eni.gsc.occuper.bean.Occuper;
 import main.java.tp.eni.gsc.prof.bean.Prof;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "salle")
 public class Salle {
     @Id
     private String salleId;
-    private String salleDesignation;
+    @Column(unique = true)
     private String salleCode;
-    @OneToOne()
-    private Prof salleProf;
+    @Column(unique = true,nullable = false)
+    private String salleDesignation;
 
-    public Salle(String salleId, String salleDesignation, String salleCode) {
-        this.salleId = salleId;
-        this.salleDesignation = salleDesignation;
-        this.salleCode = salleCode;
+    public Salle() {
     }
+
+    public Salle(String salleId, String salleCode,String salleDesignation) {
+        this.salleId = salleId;
+        this.salleCode = salleCode;
+        this.salleDesignation = salleDesignation;
+    }
+
 
     public String getSalleId() {
         return salleId;
@@ -47,11 +49,4 @@ public class Salle {
         this.salleCode = salleCode;
     }
 
-    public Prof getSalleProf() {
-        return salleProf;
-    }
-
-    public void setSalleProf(Prof salleProf) {
-        this.salleProf = salleProf;
-    }
 }

@@ -52,7 +52,7 @@ public class DaoProf {
         return null;
     }
     public List<Prof> getALLProf(){
-        String hql = "FROM Prof";
+        String hql = "FROM Prof ORDER BY profMatricule ASC";
         Session session = this.sessionFactory.openSession();
         Query query = session.createQuery(hql);
         return query.getResultList();

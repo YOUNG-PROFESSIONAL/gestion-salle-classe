@@ -19,12 +19,13 @@ public class ProfServiceUI {
             test.add(prof);
         });
         int i=0;
-        Object[][] data = new Object[test.size()][4];
+        Object[][] data = new Object[test.size()][5];
         while(i<test.size()){
             data[i][0] = test.get(i).getProfMatricule();
             data[i][1] = test.get(i).getProfNom();
             data[i][2] = test.get(i).getProfPrenom();
             data[i][3] = test.get(i).getProfGrade();
+            data[i][4] = test.get(i).getProfId();
             i++;
         }
         return data;

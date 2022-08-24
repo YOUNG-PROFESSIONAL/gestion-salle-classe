@@ -26,5 +26,6 @@
         <property name="hibernate.dbcp.maxWaitMillis">-1</property>
         <mapping class="main.java.tp.eni.gsc.prof.bean.Prof" />
         <mapping class="main.java.tp.eni.gsc.salle.bean.Salle" />
+        <mapping class="main.java.tp.eni.gsc.occuper.bean.Occuper" />
     </session-factory>
 </hibernate-configuration>

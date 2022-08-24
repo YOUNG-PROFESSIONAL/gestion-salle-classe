@@ -20,6 +20,7 @@ public class Prof implements Serializable {
     private String profMatricule;
 
 
+
     public Prof() {
     }
     public Prof(String profId, String profNom, String profPrenom, GRADE profGrade, String matricule) {

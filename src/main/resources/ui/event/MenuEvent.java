@@ -24,6 +24,9 @@ public class MenuEvent implements ChangeListener {
         else if (selectedIndex == 2){
             Title.setMainTitle("Salles");
         }
+        else if (selectedIndex == 3){
+            Title.setMainTitle("Gérer les salles");
+        }
         else {
             Title.setMainTitle("Tableau de bord");
         }
