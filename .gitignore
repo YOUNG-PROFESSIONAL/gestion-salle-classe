@@ -7,7 +7,7 @@
 /target
 # Only exists if Bazel was run
 /bazel-out
-
+/src/main/resources/ui/component/jcalendar-1.4/lib
 # dependencies
 /node_modules
 
