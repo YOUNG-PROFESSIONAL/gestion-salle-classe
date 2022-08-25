@@ -1,8 +1,6 @@
 package main.resources.ui.component.occuper;
 
-import main.java.tp.eni.gsc.prof.GRADE;
-import main.java.tp.eni.gsc.prof.bean.Prof;
-import main.java.tp.eni.gsc.salle.bean.Salle;
+import com.toedter.calendar.JCalendar;
 import main.resources.ui.service.OccuperServiceUI;
 import main.resources.ui.service.ProfServiceUI;
 import main.resources.ui.service.SalleServiceUI;
@@ -11,10 +9,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Occuper extends JPanel {
-    Salle salle;
-    Prof prof;
     JTable salleTable;
     DefaultTableModel model;
     JPanel tablePanel;
@@ -26,17 +27,30 @@ public class Occuper extends JPanel {
     JPanel formPanel ;
     GroupLayout formGroup;
 
+    /******Date ********/
+    JCalendar calendar = new JCalendar();
     /**************Professor Form******************/
     JLabel salleLabel,profLabel,dateLabel;
     JTextField fNum,fDate;
     JComboBox<String> fProf,fSalle;
     JButton busyBtn,freeBtn;
-
-    public Occuper(){initUI();}
+    public Occuper(){
+        initUI();
+    }
     private void initUI(){
+        Date date = new Date();
         /********* Init Table *****/
         initTable();
 
+        calendar.getDayChooser().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String pattern = "EEEEE dd MMMMM yyyy ";
+                SimpleDateFormat simpleDateFormat =new SimpleDateFormat(pattern, new Locale("fr", "FR"));
+                String date = simpleDateFormat.format(calendar.getDate());
+                fDate.setText(date);
+            }
+        });
         /******* Init form *********/
         initProfessorForm();
 
@@ -47,7 +61,8 @@ public class Occuper extends JPanel {
         busyBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                OccuperServiceUI.occuperSalle(new Object[]{fProf.getSelectedItem(), fSalle.getSelectedItem(), fDate.getText()});
+                OccuperServiceUI.occuperSalle(
+                        new Object[]{fProf.getSelectedItem(), fSalle.getSelectedItem(), fDate.getText()});
                 emptyField();
             }
         });
@@ -65,26 +80,16 @@ public class Occuper extends JPanel {
                 JTable table = (JTable) e.getSource();
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 fNum.setText(model.getValueAt(table.getSelectedRow(),0).toString());
-/*
-                if(model.getValueAt(table.getSelectedRow(),3) == null){
-                    fGrade.setSelectedIndex(0);
-                }
-                else if(model.getValueAt(table.getSelectedRow(),3).toString().contains("LICENCE"))
-                    fGrade.setSelectedIndex(0);
-                else if(model.getValueAt(table.getSelectedRow(),3).toString().contains("MASTER"))
-                    fGrade.setSelectedIndex(1);
-                else if(model.getValueAt(table.getSelectedRow(),3).toString().contains("DOCTORAT"))
-                    fGrade.setSelectedIndex(2);
-                else if(model.getValueAt(table.getSelectedRow(),3).toString().contains("HDR"))
-                    fGrade.setSelectedIndex(3);
-                else if(model.getValueAt(table.getSelectedRow(),3).toString().contains("PROF"))
-                    fGrade.setSelectedIndex(4);*/
                 disabledSelectRow();
             }
         });
-        // POPULATE DATA BASE ON START
-        for (Object[] busy : OccuperServiceUI.getAllSalle(null)) model.addRow(busy);
+
+        /**** POPULATE DATA BASE ON START*******/
+        for (Object[] busy : OccuperServiceUI.getAllSalle(null)){
+            model.addRow(busy);
+        }
         disabledOnStart();
+        salleTable.removeColumn(salleTable.getColumnModel().getColumn(0));
 
     }
     private void emptyField(){
@@ -93,7 +98,12 @@ public class Occuper extends JPanel {
 
     private void initTable(){
         salleTable = new JTable();
-        model = new DefaultTableModel();
+        model = new DefaultTableModel(){
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;//This causes all cells to be not editable
+            }
+        };
         pane = new JScrollPane();
         tablePanel = new JPanel();
         model.setColumnIdentifiers(new Object[]{"","Désignation","Professeur","Date","Occuper"});
@@ -115,7 +125,6 @@ public class Occuper extends JPanel {
     private void disabledOnStart(){
         fProf.setEnabled(true);
         fSalle.setEnabled(true);
-        fDate.setEnabled(true);
         busyBtn.setEnabled(true);
         freeBtn.setEnabled(false);
     }
@@ -125,34 +134,45 @@ public class Occuper extends JPanel {
         busyBtn.setEnabled(true);
         freeBtn.setEnabled(true);
     }
-    private void initProfessorForm(){
+    public void initProfessorForm(){
+
         profLabel = new JLabel("Professeur");
         salleLabel = new JLabel("Salle");
         dateLabel = new JLabel("Date");
         fNum = new JTextField();
+        fDate = new JTextField();
 
+
+        // listen for prof and salle change
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                fProf.removeAllItems();
+                fSalle.removeAllItems();
+                for(Object[] p : ProfServiceUI.getAllProfessors(null)){
+                    fProf.addItem( p[0] + "- " + p[1] + " " +p[2]);
+                }
+                for(Object[] salle : SalleServiceUI.getAllSalle(null)){
+                    fSalle.addItem(salle[1] +"- "+salle[2]);
+                }
+            }
+        });
         fProf = new JComboBox<String>();
-        JComboBox<String> fProf1 = new JComboBox<>();
-        for(Object[] p : ProfServiceUI.getAllProfessors(null)){
-            fProf.addItem( p[0] + "- " + p[1] + " " +p[2]);
-        }
-
-
         fSalle = new JComboBox<String>();
-        for(Object[] salle : SalleServiceUI.getAllSalle(null)){
-            fSalle.addItem(salle[1] +"- "+salle[2]);
-        }
-
 
         fDate = new JTextField();
+        fDate.setDisabledTextColor(new Color(0x000000));
+        fDate.setBackground(new Color(0xFFFFFF));
+        fDate.setEnabled(false);
+
+
         fDate.setToolTipText("MM/DD/YYYY");
         busyBtn = new JButton("OCCUPER");
         freeBtn = new JButton("LIBERER");
-
         formPanel = new JPanel();
         formGroup = new GroupLayout(formPanel);
         formPanel.setLayout(formGroup);
-
         formGroup.setAutoCreateGaps(true);
         formGroup.setAutoCreateContainerGaps(true);
 
@@ -192,11 +212,10 @@ public class Occuper extends JPanel {
 
         GroupLayout.SequentialGroup hGroup = group.createSequentialGroup();
         GroupLayout.ParallelGroup vGroup = group.createParallelGroup();
-
         hGroup.addGroup(group.createParallelGroup()
-                .addComponent(tablePanel).addComponent(formPanel));
+                .addComponent(tablePanel).addComponent(formPanel).addComponent(calendar));
         vGroup.addGroup(group.createSequentialGroup()
-                .addComponent(tablePanel).addComponent(formPanel));
+                .addComponent(tablePanel).addComponent(formPanel).addComponent(calendar));
 
         group.setHorizontalGroup(hGroup);
         group.setVerticalGroup(vGroup);

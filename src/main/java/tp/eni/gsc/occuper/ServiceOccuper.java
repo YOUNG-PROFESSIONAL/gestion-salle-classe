@@ -19,6 +19,7 @@ public class ServiceOccuper implements IServiceOccuper {
         occuper.setOccuperProf(daoOccuper.getProfToOccuper(salle[0].toString()));
         occuper.setOccuperSalle(daoOccuper.getSalleToOccuper(salle[1].toString()));
         occuper.setOccuperDate(salle[2].toString());
+        System.out.println();
         return daoOccuper.saveOccuper(occuper);
     }
     @Override

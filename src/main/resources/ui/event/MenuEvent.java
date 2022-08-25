@@ -1,7 +1,9 @@
 package main.resources.ui.event;
 
+import main.resources.ui.MainUI;
 import main.resources.ui.component.Menu;
 import main.resources.ui.component.header.Title;
+import main.resources.ui.component.occuper.Occuper;
 import main.resources.ui.component.professor.Professor;
 
 import javax.swing.event.ChangeEvent;
@@ -29,6 +31,7 @@ public class MenuEvent implements ChangeListener {
         }
         else {
             Title.setMainTitle("Tableau de bord");
+
         }
 
     }

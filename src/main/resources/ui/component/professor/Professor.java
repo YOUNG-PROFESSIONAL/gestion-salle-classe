@@ -9,6 +9,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -30,12 +31,15 @@ public class Professor extends JPanel {
     JTextField fNum,fNom,fPrenom;
     JComboBox<GRADE> fGrade;
     JButton addBtn,editBtn,saveBtn,deleteBtn;
+    /************** Search *******************/
+    JTextField fSearch;
+    JButton searchBtn;
 
     public Professor(){initUI();}
     private void initUI(){
         /********* Init Table *****/
         initTable();
-
+        initProfResearch();
         /******* Init form *********/
         initProfessorForm();
 
@@ -141,7 +145,12 @@ public class Professor extends JPanel {
 
     private void initTable(){
         profTable = new JTable();
-        model = new DefaultTableModel();
+        model = new DefaultTableModel(){
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;//This causes all cells to be not editable
+            }
+        };
         pane = new JScrollPane();
         tablePanel = new JPanel();
         model.setColumnIdentifiers(new Object[]{"Numero","Nom","Prénom","Grade"});
@@ -213,6 +222,23 @@ public class Professor extends JPanel {
         saveBtn.setEnabled(false);
         deleteBtn.setEnabled(true);
     }
+    private void initProfResearch(){
+        fSearch = new JTextField("a");
+        searchBtn = new JButton(new ImageIcon("src/main/resources/ui/icon/search.png"));
+        DefaultTableModel model = (DefaultTableModel) profTable.getModel();
+        DefaultTableModel model2 = (DefaultTableModel) profTable.getModel();
+        int count = model.getRowCount();
+        searchBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (fSearch.getText().length() == 0) {
+                    for (Object[] prof : ProfServiceUI.getAllProfessors("")) model.addRow(prof);
+                } else {
+
+                }
+            }
+        });
+    }
     private void initProfessorForm(){
         nom = new JLabel("Nom");
         prenom = new JLabel("Prénom");
@@ -276,9 +302,11 @@ public class Professor extends JPanel {
         GroupLayout.SequentialGroup hGroup = group.createSequentialGroup();
         GroupLayout.ParallelGroup vGroup = group.createParallelGroup();
 
-        hGroup.addGroup(group.createParallelGroup()
+        hGroup.addGroup(group.createParallelGroup().addGroup(group.createSequentialGroup()
+                        .addComponent(fSearch).addComponent(searchBtn))
                 .addComponent(tablePanel).addComponent(formPanel));
-        vGroup.addGroup(group.createSequentialGroup()
+        vGroup.addGroup(group.createSequentialGroup().addGroup(group.createParallelGroup()
+                        .addComponent(fSearch).addComponent(searchBtn))
                 .addComponent(tablePanel).addComponent(formPanel));
 
         group.setHorizontalGroup(hGroup);

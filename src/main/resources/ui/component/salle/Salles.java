@@ -1,10 +1,7 @@
 package main.resources.ui.component.salle;
 
-import main.java.tp.eni.gsc.prof.GRADE;
-import main.java.tp.eni.gsc.prof.bean.Prof;
-import main.java.tp.eni.gsc.salle.DaoSalle;
 import main.java.tp.eni.gsc.salle.bean.Salle;
-import main.resources.ui.service.ProfServiceUI;
+
 import main.resources.ui.service.SalleServiceUI;
 
 import javax.swing.*;
@@ -14,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Date;
+
 
 public class Salles extends JPanel {
     Salle salle;
@@ -36,6 +33,7 @@ public class Salles extends JPanel {
 
     public Salles(){initUI();}
     private void initUI(){
+
         /********* Init Table *****/
         initTable();
 
@@ -111,7 +109,6 @@ public class Salles extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JTable table = (JTable) e.getSource();
-                System.out.println("ID: " + salleTable.getModel().getValueAt(table.getSelectedRow(),0).toString());
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 fCode.setText(model.getValueAt(table.getSelectedRow(),1).toString());
                 fDesignation.setText(model.getValueAt(table.getSelectedRow(),2).toString());
@@ -123,7 +120,8 @@ public class Salles extends JPanel {
         for (Object[] salle : SalleServiceUI.getAllSalle(null)){
             model.addRow(salle);
         }
-        //remove the second column
+
+        /*****remove the second column*//////////////
         salleTable.removeColumn(salleTable.getColumnModel().getColumn(0));
         disabledOnStart();
 
@@ -136,7 +134,12 @@ public class Salles extends JPanel {
 
     private void initTable(){
         salleTable = new JTable();
-        model = new DefaultTableModel();
+        model = new DefaultTableModel(){
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;//This causes all cells to be not editable
+            }
+        };
         pane = new JScrollPane();
         tablePanel = new JPanel();
         model.setColumnIdentifiers(new Object[]{"ID","Code Salle","Désignation"});

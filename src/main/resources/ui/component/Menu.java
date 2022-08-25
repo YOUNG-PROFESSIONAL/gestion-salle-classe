@@ -9,15 +9,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Menu extends JTabbedPane {
+    public JPanel p1=new JPanel();
+    public JPanel p2=new Professor();
+    public JPanel p3=new Salles();
+    public JPanel p4= new Occuper();
     public Menu(){
         initUI();
     }
     private  void initUI(){
         setBounds(80,80,300,300);
-        JPanel p1=new JPanel();
-        JPanel p2=new Professor();
-        JPanel p3=new Salles();
-        JPanel p4= new Occuper();
         add("Tableau de bord",p1);
         add("Professeurs",p2);
         add("Salles",p3);
