@@ -12,7 +12,7 @@ import java.awt.*;
 public class MainUI extends JFrame {
     GroupLayout group;
     private JPanel header;
-    private JPanel tab;
+    private JTabbedPane  tab;
     private JPanel footer;
 
     public MainUI(){
@@ -20,8 +20,8 @@ public class MainUI extends JFrame {
     }
         private void initUI() {
             header = new Header();
-            tab = new JPanel();
-            tab.add(new Menu());
+            tab = new Menu();
+            //tab.add(new Menu());
             footer = new Footer();
 
             createLayout(header,tab,footer);
@@ -29,7 +29,7 @@ public class MainUI extends JFrame {
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             getContentPane().setBackground(Color.white);
             setPreferredSize(new Dimension(1920,1080));
-            setMaximumSize(new Dimension(1980,1080));
+            setMaximumSize(new Dimension(1920,1080));
         }
         private void createLayout(JComponent... args) {
             group = new GroupLayout(getContentPane());

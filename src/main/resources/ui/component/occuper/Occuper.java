@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -45,7 +46,7 @@ public class Occuper extends JPanel {
         calendar.getDayChooser().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                String pattern = "EEEEE dd MMMMM yyyy ";
+                String pattern = "dd/MM/yyyy";
                 SimpleDateFormat simpleDateFormat =new SimpleDateFormat(pattern, new Locale("fr", "FR"));
                 String date = simpleDateFormat.format(calendar.getDate());
                 fDate.setText(date);
@@ -61,8 +62,21 @@ public class Occuper extends JPanel {
         busyBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                OccuperServiceUI.occuperSalle(
-                        new Object[]{fProf.getSelectedItem(), fSalle.getSelectedItem(), fDate.getText()});
+                DefaultTableModel model = (DefaultTableModel) salleTable.getModel();
+                SimpleDateFormat formatter1=new SimpleDateFormat("dd/MM/yyyy");
+                Date date1= null;
+                try {
+                    date1 = formatter1.parse(fDate.getText());
+                    OccuperServiceUI.occuperSalle(
+                            new Object[]{fProf.getSelectedItem(), fSalle.getSelectedItem(), date1});
+                    int count = model.getRowCount();
+
+                    for(int i=0; i<count;i++)  model.removeRow(0);
+                    for (Object[] occuper : OccuperServiceUI.getAllOccuperSalle(null)) model.addRow(occuper);
+
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
                 emptyField();
             }
         });
@@ -70,7 +84,13 @@ public class Occuper extends JPanel {
         freeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) salleTable.getModel();
+                OccuperServiceUI.libererSalle(fNum.getText());
+                int count = model.getRowCount();
 
+                for(int i=0; i<count;i++)  model.removeRow(0);
+                for (Object[] occuper : OccuperServiceUI.getAllOccuperSalle(null)) model.addRow(occuper);
+                disabledOnStart();
             }
         });
 
@@ -85,7 +105,7 @@ public class Occuper extends JPanel {
         });
 
         /**** POPULATE DATA BASE ON START*******/
-        for (Object[] busy : OccuperServiceUI.getAllSalle(null)){
+        for (Object[] busy : OccuperServiceUI.getAllOccuperSalle("")){
             model.addRow(busy);
         }
         disabledOnStart();
@@ -98,6 +118,11 @@ public class Occuper extends JPanel {
 
     private void initTable(){
         salleTable = new JTable();
+
+        int gapWidth = 20;
+        int gapHeight = 4;
+        salleTable.setIntercellSpacing(new Dimension(gapWidth, gapHeight));
+
         model = new DefaultTableModel(){
             public boolean isCellEditable(int row, int column)
             {
@@ -106,7 +131,7 @@ public class Occuper extends JPanel {
         };
         pane = new JScrollPane();
         tablePanel = new JPanel();
-        model.setColumnIdentifiers(new Object[]{"","Désignation","Professeur","Date","Occuper"});
+        model.setColumnIdentifiers(new Object[]{"","Désignation","Professeur","Date"});
         salleTable.setModel(model);
         pane.setViewportView(salleTable);
         salleTable.setFont(new Font("serif",700,12));
@@ -141,6 +166,7 @@ public class Occuper extends JPanel {
         dateLabel = new JLabel("Date");
         fNum = new JTextField();
         fDate = new JTextField();
+        fDate.setMargin(new Insets(5,5,5,5));
 
 
         // listen for prof and salle change
@@ -150,10 +176,10 @@ public class Occuper extends JPanel {
             public void componentShown(ComponentEvent e) {
                 fProf.removeAllItems();
                 fSalle.removeAllItems();
-                for(Object[] p : ProfServiceUI.getAllProfessors(null)){
+                for(Object[] p : ProfServiceUI.getAllProfessors("")){
                     fProf.addItem( p[0] + "- " + p[1] + " " +p[2]);
                 }
-                for(Object[] salle : SalleServiceUI.getAllSalle(null)){
+                for(Object[] salle : SalleServiceUI.getAllSalle("")){
                     fSalle.addItem(salle[1] +"- "+salle[2]);
                 }
             }

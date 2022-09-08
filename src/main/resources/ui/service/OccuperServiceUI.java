@@ -5,13 +5,18 @@ import main.java.tp.eni.gsc.occuper.bean.Occuper;
 import main.java.tp.eni.gsc.salle.ServiceSalle;
 import main.java.tp.eni.gsc.salle.bean.Salle;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OccuperServiceUI {
-    public static Object[][] getAllSalle(String key){
+    public static Object[][] getAllOccuperSalle(String key){
         ServiceOccuper service = new ServiceOccuper();
         List<Occuper> salleList =  service.getSalles(null);
+        String pattern = "dd/MM/yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
 
         ArrayList<Occuper> test = new ArrayList<>();
         salleList.forEach(salle -> {
@@ -25,7 +30,7 @@ public class OccuperServiceUI {
             if(test.get(i).getOccuperProf() != null)
                 data[i][2] = test.get(i).getOccuperProf().getProfNom()+" "+test.get(i).getOccuperProf().getProfPrenom();
             else data[i][2] = test.get(i).getOccuperProf();
-            data[i][3] = test.get(i).getOccuperDate();
+            data[i][3] = simpleDateFormat.format(test.get(i).getOccuperDate());
             i++;
         }
         return data;
@@ -34,7 +39,7 @@ public class OccuperServiceUI {
         ServiceOccuper service = new ServiceOccuper();
        return service.occuperSalle(salle);
     }
-    public static void libererSalle(Occuper salle){
+    public static void libererSalle(String salle){
         ServiceOccuper service = new ServiceOccuper();
         service.libererSalle(salle);
     }

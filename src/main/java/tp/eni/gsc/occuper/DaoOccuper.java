@@ -8,12 +8,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import javax.persistence.Query;
+import javax.swing.*;
 import java.util.List;
 
 public class DaoOccuper {
     SessionFactory sessionFactory;
-
     public DaoOccuper(){
         sessionFactory = HibernateUtil.getSessionFactory();
     }
@@ -25,30 +24,14 @@ public class DaoOccuper {
         t.commit();
         session.close();
 
-         return getOccuper(salle);
+         return null;
     }
-    public Occuper getOccuper(Occuper salle){
-        Session session = this.sessionFactory.openSession();
-        String hql = "FROM Occuper as o WHERE o.occuperSalle.salleId = :salle";
-        return (Occuper) session.createQuery(hql).setParameter("salle",salle.getOccuperSalle().getSalleId()).getSingleResult();
-    }
-    public Occuper updateSalle(Occuper salle){
-        String hql = "UPDATE Salle Set salleCode = :code, salleDesignation = :designation " +
-                "WHERE salleId = :id ";
+
+    public Occuper deleteSalle(String id){
+        String hql = "DELETE FROM Occuper  WHERE occuperfId = :id";
         Session session = this.sessionFactory.openSession();
         Transaction t = session.beginTransaction();
-        Query query = session.createQuery(hql);
-
-        t.commit();
-        session.close();
-        return getOccuper(salle);
-    }
-    public Occuper deleteSalle(Occuper salle){
-
-        String hql = "DELETE FROM Salle as s WHERE s.salleId = :salleId";
-        Session session = this.sessionFactory.openSession();
-        Transaction t = session.beginTransaction();
-        Query query = session.createQuery(hql);
+        session.createQuery(hql).setParameter("id",id).executeUpdate();
         t.commit();
         session.close();
         return null;
@@ -81,6 +64,47 @@ public class DaoOccuper {
             }
         }
         return salle1;
+    }
+    public boolean findIfOccuper(Occuper occuper){
+        Session session = this.sessionFactory.openSession();
+        String hqlProf = "FROM Occuper WHERE occuperDate = :date";
+        List<Occuper> lists = session.createQuery(hqlProf)
+                .setParameter("date",occuper.getOccuperDate()).getResultList();
+      System.out.println(" Taille" + lists.size());
+      for (Occuper occuper1: lists){
+         if(occuper1.getOccuperProf().getProfId().contentEquals(occuper.getOccuperProf().getProfId())){
+             JOptionPane.showMessageDialog(null,
+                     occuper.getOccuperProf().getProfNom()+ " déja occuper le " + occuper.getOccuperDate());
+             return true;
+         }
+          if(occuper1.getOccuperSalle().getSalleId().equals(occuper.getOccuperSalle().getSalleId())){
+              JOptionPane.showMessageDialog(null,
+                      occuper.getOccuperSalle().getSalleDesignation()+ " déja occuper le " + occuper.getOccuperDate());
+              return true;
+          }
+      }
+
+
+
+       /* if (session.createQuery(hqlProf)
+                .setParameter("prof",occuper.getOccuperProf())
+                .setParameter("date",occuper.getOccuperDate()).getResultList().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    occuper.getOccuperProf().getProfNom()+ " déja occuper le " + occuper.getOccuperDate());
+            return true;
+        }
+        String hqlSalle = "FROM Occuper as o WHERE occuperSalle = :salle and occuperDate = :date";
+        if (!session.createQuery(hqlSalle)
+                .setParameter("salle",occuper.getOccuperSalle())
+                .setParameter("date",occuper.getOccuperDate()).getResultList().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    occuper.getOccuperProf().getProfNom()+ " déja occuper le " + occuper.getOccuperDate());
+            return true;
+        }*/
+
+        return false;
     }
 
 }

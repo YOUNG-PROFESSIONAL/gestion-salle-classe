@@ -134,6 +134,9 @@ public class Salles extends JPanel {
 
     private void initTable(){
         salleTable = new JTable();
+        int gapWidth = 20;
+        int gapHeight = 4;
+        salleTable.setIntercellSpacing(new Dimension(gapWidth, gapHeight));
         model = new DefaultTableModel(){
             public boolean isCellEditable(int row, int column)
             {

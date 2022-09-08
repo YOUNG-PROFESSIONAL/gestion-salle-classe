@@ -17,12 +17,13 @@ public class Occuper {
     private Prof occuperProf;
     @ManyToOne
     private Salle occuperSalle;
-    private String occuperDate;
+
+    private Date occuperDate;
 
     public Occuper() {
     }
 
-    public Occuper(String occuperfId, Prof occuperProf, Salle occuperSalle, String occuperDate) {
+    public Occuper(String occuperfId, Prof occuperProf, Salle occuperSalle, Date occuperDate) {
         this.occuperfId = occuperfId;
         this.occuperProf = occuperProf;
         this.occuperSalle = occuperSalle;
@@ -53,11 +54,11 @@ public class Occuper {
         this.occuperSalle = occuperSalle;
     }
 
-    public String getOccuperDate() {
+    public Date getOccuperDate() {
         return occuperDate;
     }
 
-    public void setOccuperDate(String occuperDate) {
+    public void setOccuperDate(Date occuperDate) {
         this.occuperDate = occuperDate;
     }
 }

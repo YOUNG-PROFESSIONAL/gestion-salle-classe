@@ -132,7 +132,7 @@ public class Professor extends JPanel {
             }
         });
 
-        for (Object[] prof : ProfServiceUI.getAllProfessors(null)) model.addRow(prof);
+        for (Object[] prof : ProfServiceUI.getAllProfessors("")) model.addRow(prof);
         disabledOnStart();
 
     }
@@ -145,6 +145,9 @@ public class Professor extends JPanel {
 
     private void initTable(){
         profTable = new JTable();
+        int gapWidth = 20;
+        int gapHeight = 4;
+        profTable.setIntercellSpacing(new Dimension(gapWidth, gapHeight));
         model = new DefaultTableModel(){
             public boolean isCellEditable(int row, int column)
             {
@@ -223,18 +226,22 @@ public class Professor extends JPanel {
         deleteBtn.setEnabled(true);
     }
     private void initProfResearch(){
-        fSearch = new JTextField("a");
+        fSearch = new JTextField("");
         searchBtn = new JButton(new ImageIcon("src/main/resources/ui/icon/search.png"));
         DefaultTableModel model = (DefaultTableModel) profTable.getModel();
-        DefaultTableModel model2 = (DefaultTableModel) profTable.getModel();
-        int count = model.getRowCount();
+
         searchBtn.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (fSearch.getText().length() == 0) {
+                int count = model.getRowCount();
+
+                  for(int i=0; i<count;i++)  model.removeRow(0);
+
+                if (fSearch.getText().isEmpty()) {
                     for (Object[] prof : ProfServiceUI.getAllProfessors("")) model.addRow(prof);
                 } else {
-
+                    for (Object[] prof : ProfServiceUI.getAllProfessors(fSearch.getText())) model.addRow(prof);
                 }
             }
         });
@@ -245,9 +252,12 @@ public class Professor extends JPanel {
         grade = new JLabel("Grade");
         fNum = new JTextField();
         fNom = new JTextField();
+        fNom.setMargin(new Insets(5,5,5,5));
         fPrenom = new JTextField();
-        fNom.setPreferredSize(new Dimension(50,35));
+        fPrenom.setMargin(new Insets(5,5,5,5));
+        fPrenom.setPreferredSize(new Dimension(50,35));
         fGrade = new JComboBox();
+        fGrade.getInsets(new Insets(5,5,5,5));
         fGrade.addItem(GRADE.LICENCE);
         fGrade.addItem(GRADE.MASTER);
         fGrade.addItem(GRADE.DOCTORAT);

@@ -51,10 +51,11 @@ public class DaoProf {
         session.close();
         return null;
     }
-    public List<Prof> getALLProf(){
-        String hql = "FROM Prof ORDER BY profMatricule ASC";
+    public List<Prof> getALLProf(String key){
+        System.out.println(key);
+        String hql = "FROM Prof WHERE profNom like :nom or profMatricule like :code ORDER BY profMatricule ASC";
         Session session = this.sessionFactory.openSession();
-        Query query = session.createQuery(hql);
+        Query query = session.createQuery(hql).setParameter("nom",'%'+key+'%').setParameter("code",'%'+key+'%');
         return query.getResultList();
     }
 
